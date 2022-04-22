@@ -15,20 +15,38 @@ import kotlin.random.Random
 
 
 class MainActivityViewModel : ViewModel(){
-     var liveData: MutableLiveData<List<Gasto>>
+    var liveData: MutableLiveData<List<Gasto>>
+    var liveTotal: MutableLiveData<Double>
+
     init {
         liveData = MutableLiveData()
+        liveTotal = MutableLiveData()
     }
 
     fun getLiveDataObserver(): MutableLiveData<List<Gasto>>{
         return liveData
     }
 
+    fun getLiveTotalObserver(): MutableLiveData<Double> {
+        return liveTotal
+    }
+
     fun getGastos(gastoDao: GastoDao){
         CoroutineScope(Dispatchers.IO).launch {
-            for (i in 0..100) {
-                gastoDao.insertGasto(Gasto(0, "Gasto ${i}", Random.nextDouble() * 100))
-            }
+            liveData.postValue(gastoDao.getAllGastos())
+        }
+    }
+
+    fun getTotalGastos(gastoDao: GastoDao) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val totalGastos = gastoDao.getTotalMontoGastos()
+            liveTotal.postValue(totalGastos)
+        }
+    }
+
+    fun addGasto(gastoDao: GastoDao, gasto: Gasto) {
+        CoroutineScope(Dispatchers.IO).launch {
+            gastoDao.insertGasto(gasto)
             liveData.postValue(gastoDao.getAllGastos())
         }
     }

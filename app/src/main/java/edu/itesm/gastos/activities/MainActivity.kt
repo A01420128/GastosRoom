@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +38,17 @@ class MainActivity : AppCompatActivity() {
         gastoDao = db.gastoDao()
         initRecycler()
         initViewModel()
+        initGastoInput()
+    }
+
+    private fun initGastoInput() {
+        binding.buttonAdd.setOnClickListener {
+            val description = binding.editGastoDescription.text.toString()
+            val monto = binding.editGastoMonto.text.toString().toDouble()
+            // FIXME: Validation
+            val gasto = Gasto(0, description, monto)
+            viewModel.addGasto(gastoDao, gasto)
+        }
     }
     private fun initRecycler(){
         gastos = mutableListOf<Gasto>()
@@ -45,13 +57,17 @@ class MainActivity : AppCompatActivity() {
         binding.gastos.adapter = adapter
     }
 
-    private fun initViewModel(){
+    private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
         viewModel.getLiveDataObserver().observe(this, Observer {
-            if(!it.isEmpty()){
+            if (!it.isEmpty()) {
                 adapter.setGastos(it)
+                viewModel.getTotalGastos(gastoDao)
                 adapter.notifyDataSetChanged()
             }
+        })
+        viewModel.getLiveTotalObserver().observe(this, Observer {
+            Toast.makeText(this, "${it}", Toast.LENGTH_LONG).show()
         })
         viewModel.getGastos(gastoDao)
     }
