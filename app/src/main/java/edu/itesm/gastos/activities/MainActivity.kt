@@ -1,10 +1,12 @@
 package edu.itesm.gastos.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -38,18 +40,9 @@ class MainActivity : AppCompatActivity() {
         gastoDao = db.gastoDao()
         initRecycler()
         initViewModel()
-        initGastoInput()
+        fabAddData()
     }
 
-    private fun initGastoInput() {
-        binding.buttonAdd.setOnClickListener {
-            val description = binding.editGastoDescription.text.toString()
-            val monto = binding.editGastoMonto.text.toString().toDouble()
-            // FIXME: Validation
-            val gasto = Gasto(0, description, monto)
-            viewModel.addGasto(gastoDao, gasto)
-        }
-    }
     private fun initRecycler(){
         gastos = mutableListOf<Gasto>()
         adapter = GastosAdapter(gastos)
@@ -67,8 +60,23 @@ class MainActivity : AppCompatActivity() {
             }
         })
         viewModel.getLiveTotalObserver().observe(this, Observer {
-            Toast.makeText(this, "${it}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Gasto total: ${it}", Toast.LENGTH_LONG).show()
         })
         viewModel.getGastos(gastoDao)
+    }
+
+    private val agregaDatosLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { resultado ->
+        if (resultado.resultCode == RESULT_OK) {
+            val gasto: Gasto= resultado.data?.getSerializableExtra("gasto") as Gasto
+            Toast.makeText(baseContext, gasto.description, Toast.LENGTH_LONG).show()
+            viewModel.addGasto(gastoDao, gasto)
+        }
+    }
+
+    private fun fabAddData() {
+        binding.fab.setOnClickListener {
+            val intent = Intent(baseContext, CapturaGastoActivity::class.java)
+            agregaDatosLauncher.launch(intent)
+        }
     }
 }

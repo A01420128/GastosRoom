@@ -4,7 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/ic_appicon.xml" value="0.126" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_captura_gasto.xml" value="0.13697916666666668" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2972869873046875" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.1" />
         <entry key="app/src/main/res/layout/gasto.xml" value="0.22" />
       </map>
