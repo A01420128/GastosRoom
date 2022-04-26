@@ -75,8 +75,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun fabAddData() {
         binding.fab.setOnClickListener {
-            val intent = Intent(baseContext, CapturaGastoActivity::class.java)
-            agregaDatosLauncher.launch(intent)
+//            val intent = Intent(baseContext, CapturaGastoActivity::class.java)
+//            agregaDatosLauncher.launch(intent)
+            GastoCapturaDialog(onSubmitClickListener = { gasto ->
+                viewModel.addGasto(gastoDao, gasto)
+            }).show(supportFragmentManager, "")
         }
     }
 }

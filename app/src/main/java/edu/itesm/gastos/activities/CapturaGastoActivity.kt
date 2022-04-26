@@ -21,8 +21,8 @@ class CapturaGastoActivity : AppCompatActivity() {
     private fun initUI() {
         binding.agregaGasto.setOnClickListener {
             val concepto = binding.conceptoGastoCifra.text.toString()
-            val monto = binding.montoGastoCifra.text.toString().toDouble()
-            if (concepto == "" || monto == 0.0) {
+            val monto = binding.montoGastoCifra.text.toString().toDoubleOrNull()
+            if (concepto == "" || monto == null) {
                 Toast.makeText(this, "Wrong concepto or monto.", Toast.LENGTH_LONG).show()
             } else {
                 val gasto = Gasto(0, concepto, monto)
